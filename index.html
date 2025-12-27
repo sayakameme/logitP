@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>老年肺癌患者术后肺炎预测工具</title>
     <style>
         body {
@@ -11,6 +11,7 @@
             margin: 0;
             padding: 20px;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -19,21 +20,25 @@
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 24px;
+            font-size: 22px;
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
             color: #34495e;
         }
+
         input[type="number"], input[type="text"] {
             width: 100%;
             padding: 10px;
@@ -42,18 +47,22 @@
             font-size: 14px;
             box-sizing: border-box;
         }
+
         .radio-group {
             display: flex;
             gap: 15px;
             margin-top: 5px;
         }
+
         .radio-item {
             display: flex;
             align-items: center;
         }
+
         .radio-item input[type="radio"] {
             margin-right: 5px;
         }
+
         button {
             background-color: #3498db;
             color: white;
@@ -65,9 +74,11 @@
             width: 100%;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #2980b9;
         }
+
         .result {
             margin-top: 30px;
             padding: 20px;
@@ -75,21 +86,25 @@
             border-radius: 5px;
             border-left: 4px solid #3498db;
         }
+
         .result h3 {
             margin-top: 0;
             color: #2c3e50;
         }
+
         .probability {
             font-size: 18px;
             font-weight: bold;
             color: #e74c3c;
             margin: 10px 0;
         }
+
         .explanation {
             font-size: 14px;
             color: #7f8c8d;
             line-height: 1.5;
         }
+
         .error {
             color: #e74c3c;
             font-size: 14px;
@@ -98,159 +113,165 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>老年肺癌患者术后肺炎预测工具</h1>
-        
-        <div class="form-group">
-            <label>吸烟史:</label>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="smoking_yes" name="smoking" value="1" onchange="validateRadio('smoking')">
-                    <label for="smoking_yes">有</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="smoking_no" name="smoking" value="0" onchange="validateRadio('smoking')" checked>
-                    <label for="smoking_no">无</label>
-                </div>
+<div class="container">
+    <h1>老年肺癌患者术后肺炎预测工具</h1>
+
+    <div class="form-group">
+        <label>吸烟史:</label>
+        <div class="radio-group">
+            <div class="radio-item">
+                <input id="smoking_yes" name="smoking" onchange="validateRadio('smoking')" type="radio" value="1">
+                <label for="smoking_yes">有</label>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label>切口疼痛:</label>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="pain_yes" name="pain" value="1" onchange="validateRadio('pain')">
-                    <label for="pain_yes">有</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="pain_no" name="pain" value="0" onchange="validateRadio('pain')" checked>
-                    <label for="pain_no">无</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>糖尿病:</label>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="diabetes_yes" name="diabetes" value="1" onchange="validateRadio('diabetes')">
-                    <label for="diabetes_yes">有</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="diabetes_no" name="diabetes" value="0" onchange="validateRadio('diabetes')" checked>
-                    <label for="diabetes_no">无</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>慢性阻塞性肺疾病 (COPD):</label>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="copd_yes" name="copd" value="1" onchange="validateRadio('copd')">
-                    <label for="copd_yes">有</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="copd_no" name="copd" value="0" onchange="validateRadio('copd')" checked>
-                    <label for="copd_no">无</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="age">年龄 (岁):</label>
-            <input type="number" id="age" name="age" placeholder="请输入年龄" min="0" max="120" onchange="validateNumber('age')">
-            <div id="age_error" class="error"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="albumin">血清白蛋白 (g/L):</label>
-            <input type="number" id="albumin" name="albumin" placeholder="请输入血清白蛋白" min="0" max="100" step="0.1" onchange="validateNumber('albumin')">
-            <div id="albumin_error" class="error"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="wbc">白细胞计数 (×10⁹/L):</label>
-            <input type="number" id="wbc" name="wbc" placeholder="请输入白细胞计数" min="0" max="100" step="0.1" onchange="validateNumber('wbc')">
-            <div id="wbc_error" class="error"></div>
-        </div>
-
-        <button onclick="calculateProbability()">计算肺炎发生概率</button>
-
-        <div id="result" class="result" style="display: none;">
-            <h3>预测结果</h3>
-            <div id="probability_display" class="probability"></div>
-            <div class="explanation">
-                <p><strong>说明:</strong> 该预测基于多因素Logistic回归模型，输入您的临床特征后，计算得出术后肺炎发生的概率。</p>
-                <p>概率越高，提示术后肺炎风险越高，建议及时采取预防措施（如加强呼吸道护理、控制基础疾病等）。</p>
+            <div class="radio-item">
+                <input checked id="smoking_no" name="smoking" onchange="validateRadio('smoking')" type="radio"
+                       value="0">
+                <label for="smoking_no">无</label>
             </div>
         </div>
     </div>
 
-    <script>
-        // 自动验证单选按钮 修改1
-        function validateRadio(fieldName) {
-            const radios = document.getElementsByName(fieldName);
-            let isValid = false;
-            for (let radio of radios) {
-                if (radio.checked) {
-                    isValid = true;
-                    break;
-                }
+    <div class="form-group">
+        <label>切口疼痛:</label>
+        <div class="radio-group">
+            <div class="radio-item">
+                <input id="pain_yes" name="pain" onchange="validateRadio('pain')" type="radio" value="1">
+                <label for="pain_yes">有</label>
+            </div>
+            <div class="radio-item">
+                <input checked id="pain_no" name="pain" onchange="validateRadio('pain')" type="radio" value="0">
+                <label for="pain_no">无</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>糖尿病:</label>
+        <div class="radio-group">
+            <div class="radio-item">
+                <input id="diabetes_yes" name="diabetes" onchange="validateRadio('diabetes')" type="radio" value="1">
+                <label for="diabetes_yes">有</label>
+            </div>
+            <div class="radio-item">
+                <input checked id="diabetes_no" name="diabetes" onchange="validateRadio('diabetes')" type="radio"
+                       value="0">
+                <label for="diabetes_no">无</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>慢性阻塞性肺疾病 (COPD):</label>
+        <div class="radio-group">
+            <div class="radio-item">
+                <input id="copd_yes" name="copd" onchange="validateRadio('copd')" type="radio" value="1">
+                <label for="copd_yes">有</label>
+            </div>
+            <div class="radio-item">
+                <input checked id="copd_no" name="copd" onchange="validateRadio('copd')" type="radio" value="0">
+                <label for="copd_no">无</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="age">年龄 (岁):</label>
+        <input id="age" max="120" min="0" name="age" onchange="validateNumber('age')" placeholder="请输入年龄"
+               type="number">
+        <div class="error" id="age_error"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="albumin">血清白蛋白 (g/L):</label>
+        <input id="albumin" max="100" min="0" name="albumin" onchange="validateNumber('albumin')"
+               placeholder="请输入血清白蛋白" step="0.1" type="number">
+        <div class="error" id="albumin_error"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="wbc">白细胞计数 (×10⁹/L):</label>
+        <input id="wbc" max="100" min="0" name="wbc" onchange="validateNumber('wbc')" placeholder="请输入白细胞计数"
+               step="0.1" type="number">
+        <div class="error" id="wbc_error"></div>
+    </div>
+
+    <button onclick="calculateProbability()">计算肺炎发生概率</button>
+
+    <div class="result" id="result" style="display: none;">
+        <h3>预测结果</h3>
+        <div class="probability" id="probability_display"></div>
+        <div class="explanation">
+            <p><strong>说明:</strong> 该预测基于多因素Logistic回归模型，输入您的临床特征后，计算得出术后肺炎发生的概率。
+            </p>
+            <p>概率越高，提示术后肺炎风险越高，建议及时采取预防措施（如加强呼吸道护理、控制基础疾病等）。</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 自动验证单选按钮 修改1
+    function validateRadio(fieldName) {
+        const radios = document.getElementsByName(fieldName);
+        let isValid = false;
+        for (let radio of radios) {
+            if (radio.checked) {
+                isValid = true;
+                break;
             }
-            return isValid;
+        }
+        return isValid;
+    }
+
+    // 验证数字输入（非负）
+    function validateNumber(fieldId) {
+        const input = document.getElementById(fieldId);
+        const errorElement = document.getElementById(fieldId + '_error');
+        const value = parseFloat(input.value);
+
+        if (isNaN(value) || value < 0) {
+            errorElement.textContent = '请输入有效的非负数值';
+            return false;
+        } else {
+            errorElement.textContent = '';
+            return true;
+        }
+    }
+
+    // 计算肺炎发生概率
+    function calculateProbability() {
+        // 获取单选按钮值
+        const smoking = parseInt(document.querySelector('input[name="smoking"]:checked')?.value) || 0;
+        const pain = parseInt(document.querySelector('input[name="pain"]:checked')?.value) || 0;
+        const diabetes = parseInt(document.querySelector('input[name="diabetes"]:checked')?.value) || 0;
+        const copd = parseInt(document.querySelector('input[name="copd"]:checked')?.value) || 0;
+
+        // 获取数字输入值
+        const age = parseFloat(document.getElementById('age').value) || 0;
+        const albumin = parseFloat(document.getElementById('albumin').value) || 0;
+        const wbc = parseFloat(document.getElementById('wbc').value) || 0;
+
+        // 验证所有输入
+        if (!validateRadio('smoking') || !validateRadio('pain') || !validateRadio('diabetes') || !validateRadio('copd')) {
+            alert('请完成所有必填项（吸烟史、切口疼痛、糖尿病、COPD）');
+            return;
         }
 
-        // 验证数字输入（非负）
-        function validateNumber(fieldId) {
-            const input = document.getElementById(fieldId);
-            const errorElement = document.getElementById(fieldId + '_error');
-            const value = parseFloat(input.value);
-
-            if (isNaN(value) || value < 0) {
-                errorElement.textContent = '请输入有效的非负数值';
-                return false;
-            } else {
-                errorElement.textContent = '';
-                return true;
-            }
+        if (document.getElementById('age').value === '' || document.getElementById('albumin').value === '' || document.getElementById('wbc').value === '') {
+            alert('请填写所有数值字段（年龄、血清白蛋白、白细胞计数）');
+            return;
         }
 
-        // 计算肺炎发生概率
-        function calculateProbability() {
-            // 获取单选按钮值
-            const smoking = parseInt(document.querySelector('input[name="smoking"]:checked')?.value) || 0;
-            const pain = parseInt(document.querySelector('input[name="pain"]:checked')?.value) || 0;
-            const diabetes = parseInt(document.querySelector('input[name="diabetes"]:checked')?.value) || 0;
-            const copd = parseInt(document.querySelector('input[name="copd"]:checked')?.value) || 0;
+        // 计算Logit(P)
+        const logitP = 1.847 * smoking + 1.127 * pain + 2.47 * diabetes + 2.835 * copd +
+            1.401 * age - 0.376 * albumin - 1.655 * wbc;
 
-            // 获取数字输入值
-            const age = parseFloat(document.getElementById('age').value) || 0;
-            const albumin = parseFloat(document.getElementById('albumin').value) || 0;
-            const wbc = parseFloat(document.getElementById('wbc').value) || 0;
+        // 计算概率 P = 1 / (1 + e^(-logitP))
+        const probability = 1 / (1 + Math.exp(-logitP));
 
-            // 验证所有输入
-            if (!validateRadio('smoking') || !validateRadio('pain') || !validateRadio('diabetes') || !validateRadio('copd')) {
-                alert('请完成所有必填项（吸烟史、切口疼痛、糖尿病、COPD）');
-                return;
-            }
-
-            if (document.getElementById('age').value === '' || document.getElementById('albumin').value === '' || document.getElementById('wbc').value === '') {
-                alert('请填写所有数值字段（年龄、血清白蛋白、白细胞计数）');
-                return;
-            }
-
-            // 计算Logit(P)
-            const logitP = 1.847 * smoking + 1.127 * pain + 2.47 * diabetes + 2.835 * copd + 
-                          1.401 * age - 0.376 * albumin - 1.655 * wbc;
-
-            // 计算概率 P = 1 / (1 + e^(-logitP))
-            const probability = 1 / (1 + Math.exp(-logitP));
-
-            // 显示结果（保留两位小数）
-            document.getElementById('probability_display').textContent = `肺炎发生概率: ${(probability*100).toFixed(2)}%`;
-            document.getElementById('result').style.display = 'block';
-        }
-    </script>
+        // 显示结果（保留两位小数）
+        document.getElementById('probability_display').textContent = `肺炎发生概率: ${(probability * 100).toFixed(2)}%`;
+        document.getElementById('result').style.display = 'block';
+    }
+</script>
 </body>
 </html>
